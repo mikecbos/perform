@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Michael Cheng — Musical Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─────────────────────────────────────────
+       CSS VARIABLES — Concert Programme Palette
+       ────────────────────────────────────────── */
+    :root {
+      --cream:      #F4EFE4;
+      --cream-dark: #E8E0CF;
+      --navy:       #1B2A45;
+      --navy-mid:   #253655;
+      --gold:       #C9A84C;
+      --gold-light: #E0C370;
+      --maroon:     #6B2D2D;
+      --maroon-mid: #8A3A3A;
+      --ink:        #1C1C1C;
+      --ink-soft:   #3A3530;
+      --muted:      #7A6E61;
+
+      --ff-display: 'Playfair Display', Georgia, serif;
+      --ff-body:    'Crimson Text', Georgia, serif;
+      --ff-italic:  'EB Garamond', Georgia, serif;
+
+      --shadow-card: 0 8px 40px rgba(27,42,69,0.13);
+      --shadow-lift: 0 18px 60px rgba(27,42,69,0.22);
+    }
+
+    /* ─────────── RESET & BASE ─────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--cream);
+      color: var(--ink);
+      font-family: var(--ff-body);
+      font-size: 18px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ─────────── DECORATIVE TEXTURE ─────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(ellipse at 12% 18%, rgba(201,168,76,0.07) 0%, transparent 55%),
+        radial-gradient(ellipse at 88% 75%, rgba(107,45,45,0.06) 0%, transparent 55%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    main { position: relative; z-index: 1; }
+
+    /* ─────────── HEADER / HERO ─────────── */
+    .site-header {
+      background-color: var(--navy);
+      color: var(--cream);
+      text-align: center;
+      padding: 72px 32px 56px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Subtle staff lines */
+    .site-header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 22px,
+        rgba(201,168,76,0.08) 22px,
+        rgba(201,168,76,0.08) 24px
+      );
+      pointer-events: none;
+    }
+
+    /* Gold bar at top */
+    .site-header::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--maroon), var(--gold), var(--maroon));
+    }
+
+    .header-ornament {
+      font-size: 28px;
+      letter-spacing: 0.5em;
+      color: var(--gold);
+      opacity: 0.6;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .site-header h1 {
+      font-family: var(--ff-display);
+      font-size: clamp(2.6rem, 6vw, 4.8rem);
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      line-height: 1.1;
+      color: var(--cream);
+    }
+
+    .site-header h1 em {
+      font-style: italic;
+      color: var(--gold-light);
+    }
+
+    .header-rule {
+      width: 80px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 24px auto;
+    }
+
+    .header-tagline {
+      font-family: var(--ff-italic);
+      font-size: clamp(1rem, 2.2vw, 1.35rem);
+      font-style: italic;
+      color: rgba(244,239,228,0.75);
+      letter-spacing: 0.04em;
+      max-width: 560px;
+      margin: 0 auto 28px;
+    }
+
+    .header-roles {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px 20px;
+      margin-top: 16px;
+    }
+
+    .role-pill {
+      font-family: var(--ff-display);
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--navy);
+      background: var(--gold);
+      padding: 5px 16px;
+      border-radius: 2px;
+    }
+
+    /* ─────────── SECTION WRAPPER ─────────── */
+    .section {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 80px 32px;
+    }
+
+    .section-label {
+      font-family: var(--ff-display);
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.25em;
+      color: var(--gold);
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      font-family: var(--ff-display);
+      font-size: clamp(1.7rem, 3.5vw, 2.6rem);
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1.15;
+      margin-bottom: 14px;
+    }
+
+    .section-title em {
+      font-style: italic;
+      color: var(--maroon);
+    }
+
+    .section-intro {
+      font-size: 1.08rem;
+      color: var(--muted);
+      max-width: 580px;
+      margin-bottom: 48px;
+    }
+
+    /* Decorative divider */
+    .divider {
+      border: none;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--cream-dark), transparent);
+      margin: 0;
+    }
+
+    /* ─────────── VIDEO SECTION ─────────── */
+    .video-section {
+      background-color: var(--navy);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .video-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 0% 50%, rgba(201,168,76,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse at 100% 50%, rgba(107,45,45,0.10) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .video-section .section {
+      position: relative;
+      z-index: 1;
+    }
+
+    .video-section .section-label { color: var(--gold); }
+
+    .video-section .section-title { color: var(--cream); }
+
+    .video-section .section-intro { color: rgba(244,239,228,0.6); }
+
+    .video-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 36px;
+      align-items: start;
+    }
+
+    @media (max-width: 700px) {
+      .video-grid { grid-template-columns: 1fr; }
+    }
+
+    .video-card {
+      background: rgba(244,239,228,0.04);
+      border: 1px solid rgba(201,168,76,0.18);
+      border-radius: 4px;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .video-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lift);
+    }
+
+    .video-card--landscape .video-embed {
+      position: relative;
+      padding-top: 56.25%; /* 16:9 */
+    }
+
+    .video-card--portrait .video-embed {
+      position: relative;
+      padding-top: 177.78%; /* 9:16 — YouTube Shorts */
+      max-width: 380px;
+      margin: 0 auto;
+    }
+
+    .video-embed iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .video-meta {
+      padding: 20px 22px 22px;
+    }
+
+    .video-meta .badge {
+      display: inline-block;
+      font-family: var(--ff-display);
+      font-size: 0.62rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      padding: 3px 10px;
+      border-radius: 2px;
+      margin-bottom: 10px;
+    }
+
+    .badge--gold {
+      background: rgba(201,168,76,0.15);
+      color: var(--gold-light);
+      border: 1px solid rgba(201,168,76,0.3);
+    }
+
+    .badge--maroon {
+      background: rgba(107,45,45,0.25);
+      color: #D98585;
+      border: 1px solid rgba(107,45,45,0.4);
+    }
+
+    .video-meta h3 {
+      font-family: var(--ff-display);
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--cream);
+      margin-bottom: 6px;
+    }
+
+    .video-meta p {
+      font-size: 0.9rem;
+      color: rgba(244,239,228,0.55);
+      line-height: 1.5;
+    }
+
+    /* ─────────── JOURNEY / INFOGRAPHIC SECTION ─────────── */
+    .journey-section {
+      background-color: var(--cream);
+    }
+
+    .infographic-frame {
+      background: white;
+      border: 1px solid var(--cream-dark);
+      border-radius: 4px;
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+      max-width: 520px;
+      margin: 0 auto;
+      transition: box-shadow 0.3s ease;
+    }
+
+    .infographic-frame:hover {
+      box-shadow: var(--shadow-lift);
+    }
+
+    .infographic-frame img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .journey-layout {
+      display: grid;
+      grid-template-columns: 1fr 480px;
+      gap: 64px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .journey-layout {
+        grid-template-columns: 1fr;
+        gap: 48px;
+      }
+      .infographic-frame { max-width: 460px; }
+    }
+
+    /* ─────────── BIO HIGHLIGHTS ─────────── */
+    .bio-blocks {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .bio-block {
+      padding-left: 24px;
+      border-left: 3px solid var(--cream-dark);
+      transition: border-color 0.25s ease;
+    }
+
+    .bio-block:hover {
+      border-left-color: var(--gold);
+    }
+
+    .bio-block-year {
+      font-family: var(--ff-display);
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .bio-block h4 {
+      font-family: var(--ff-display);
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+
+    .bio-block p {
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    /* ─────────── CREDENTIALS ─────────── */
+    .credentials-section {
+      background: linear-gradient(160deg, var(--navy) 0%, var(--navy-mid) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .credentials-section::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--maroon), var(--gold), var(--maroon));
+    }
+
+    .credentials-section .section-label { color: var(--gold); }
+    .credentials-section .section-title { color: var(--cream); }
+
+    .cred-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 760px) {
+      .cred-grid { grid-template-columns: 1fr; }
+    }
+
+    .cred-card {
+      background: rgba(244,239,228,0.05);
+      border: 1px solid rgba(201,168,76,0.15);
+      border-radius: 4px;
+      padding: 28px 26px;
+      transition: background 0.25s, border-color 0.25s;
+    }
+
+    .cred-card:hover {
+      background: rgba(201,168,76,0.08);
+      border-color: rgba(201,168,76,0.35);
+    }
+
+    .cred-icon {
+      font-size: 1.6rem;
+      margin-bottom: 14px;
+      display: block;
+    }
+
+    .cred-card h4 {
+      font-family: var(--ff-display);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--gold-light);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-size: 0.8rem;
+    }
+
+    .cred-card p {
+      font-size: 0.93rem;
+      color: rgba(244,239,228,0.65);
+      line-height: 1.55;
+    }
+
+    /* ─────────── FOOTER ─────────── */
+    .site-footer {
+      background-color: var(--ink);
+      color: rgba(244,239,228,0.45);
+      text-align: center;
+      padding: 36px 32px;
+      font-size: 0.85rem;
+      font-family: var(--ff-display);
+      letter-spacing: 0.06em;
+    }
+
+    .site-footer strong {
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    /* ─────────── ENTRANCE ANIMATIONS ─────────── */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .fade-up:nth-child(2) { transition-delay: 0.1s; }
+    .fade-up:nth-child(3) { transition-delay: 0.2s; }
+    .fade-up:nth-child(4) { transition-delay: 0.3s; }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════ HERO HEADER ══════════ -->
+  <header class="site-header">
+    <span class="header-ornament">♩ ♪ ♫ ♬</span>
+    <h1>Michael <em>Cheng</em></h1>
+    <div class="header-rule"></div>
+    <p class="header-tagline">
+      Performer &middot; Educator &middot; Accompanist &mdash; a musical life in performance and pedagogy.
+    </p>
+    <div class="header-roles">
+      <span class="role-pill">Vocalist &amp; Pianist</span>
+      <span class="role-pill">Choral Director</span>
+      <span class="role-pill">Music Educator</span>
+      <span class="role-pill">Community Theatre</span>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ══════════ VIDEO DEMOS ══════════ -->
+    <section class="video-section">
+      <div class="section">
+        <span class="section-label">Performance Demos</span>
+        <h2 class="section-title">Hear &amp; See the <em>Work</em></h2>
+        <p class="section-intro">
+          Selected recordings from recent performance work — a full production and a short-form performance clip.
+        </p>
+
+        <div class="video-grid">
+
+          <!-- Landscape video -->
+          <div class="video-card video-card--landscape fade-up">
+            <div class="video-embed">
+              <iframe
+                src="https://www.youtube.com/embed/GUCOKXEt8EA"
+                title="Michael Cheng — Performance Video"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen
+              ></iframe>
+            </div>
+            <div class="video-meta">
+              <span class="badge badge--gold">Feature</span>
+              <h3>Performance Demo</h3>
+              <p>A full-length performance showcase demonstrating vocal and theatrical range.</p>
+            </div>
+          </div>
+
+          <!-- Shorts / portrait video -->
+          <div class="video-card video-card--portrait fade-up">
+            <div class="video-embed">
+              <iframe
+                src="https://www.youtube.com/embed/j5R3qX1p7_M"
+                title="Michael Cheng — Short Clip"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen
+              ></iframe>
+            </div>
+            <div class="video-meta">
+              <span class="badge badge--maroon">Short Clip</span>
+              <h3>Quick Take</h3>
+              <p>A short-form glimpse at Michael's performance style and presence.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider" />
+
+    <!-- ══════════ MUSICAL JOURNEY ══════════ -->
+    <section class="journey-section">
+      <div class="section">
+        <span class="section-label">Musical Journey</span>
+        <h2 class="section-title">A Foundation Built Over <em>Decades</em></h2>
+        <p class="section-intro">
+          From community choruses to church organs, theatrical stages to university classrooms — a life
+          shaped by music in all its forms.
+        </p>
+
+        <div class="journey-layout">
+
+          <!-- Left: Timeline highlights -->
+          <div class="bio-blocks">
+
+            <div class="bio-block fade-up">
+              <span class="bio-block-year">2026 — Present</span>
+              <h4>Performer — "Enter Stage Left" Musical Revue</h4>
+              <p>Appearing in the "Children Will Listen" production at the Hopkinton Center for the Arts, running September 2025 through March 2026.</p>
+            </div>
+
+            <div class="bio-block fade-up">
+              <span class="bio-block-year">2023 – 2025</span>
+              <h4>Greater Milford Community Chorus</h4>
+              <p>Active as both a performer and backup accompanist for this community-based vocal ensemble.</p>
+            </div>
+
+            <div class="bio-block fade-up">
+              <span class="bio-block-year">2014 – 2016</span>
+              <h4>Musician at Crossway Church</h4>
+              <p>Served on a rotating basis, providing instrumental support for weekly services and special events.</p>
+            </div>
+
+            <div class="bio-block fade-up">
+              <span class="bio-block-year">2009</span>
+              <h4>Accompanist — Good Company Tutorials</h4>
+              <p>Provided piano accompaniment for community theatre productions, supporting local theatrical talent.</p>
+            </div>
+
+            <div class="bio-block fade-up">
+              <span class="bio-block-year">12 Years</span>
+              <h4>Classroom Music Education</h4>
+              <p>Experienced as a General Music Educator, Vocal/Choral Instructor, and Band Director across primary and secondary education.</p>
+            </div>
+
+          </div>
+
+          <!-- Right: Infographic image -->
+          <div class="fade-up">
+            <div class="infographic-frame">
+              <img
+                src="MCHENG_Music_Background.png"
+                alt="Michael Cheng: Musical Journey & Professional Foundation — infographic"
+              />
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider" />
+
+    <!-- ══════════ CREDENTIALS ══════════ -->
+    <section class="credentials-section">
+      <div class="section">
+        <span class="section-label">Professional Foundation</span>
+        <h2 class="section-title">Education &amp; <em>Expertise</em></h2>
+
+        <div class="cred-grid">
+
+          <div class="cred-card fade-up">
+            <span class="cred-icon">🎓</span>
+            <h4>Advanced Degrees</h4>
+            <p>
+              Master's in Management, Harvard University &bull; Master of Music, Northwestern University &bull;
+              B.S. in Music Education, California State University, Fullerton.
+            </p>
+          </div>
+
+          <div class="cred-card fade-up">
+            <span class="cred-icon">🎹</span>
+            <h4>Instructional Roles</h4>
+            <p>
+              Over a decade teaching General Music, directing Vocal/Choral ensembles, and leading concert bands
+              in primary and secondary school settings.
+            </p>
+          </div>
+
+          <div class="cred-card fade-up">
+            <span class="cred-icon">📖</span>
+            <h4>Pedagogical Influence</h4>
+            <p>
+              Teaching philosophy grounded in the Richards Institute for Education and Research, emphasizing
+              foundational music education research and methodology.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ══════════ FOOTER ══════════ -->
+  <footer class="site-footer">
+    <strong>Michael Cheng</strong> &nbsp;&middot;&nbsp; Musical Demo &nbsp;&middot;&nbsp;
+    Performer &bull; Educator &bull; Accompanist
+  </footer>
+
+  <!-- ──── Scroll-triggered fade-in ──── -->
+  <script>
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add('visible');
+            observer.unobserve(e.target);
+          }
+        });
+      },
+      { threshold: 0.12 }
+    );
+
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+  </script>
+
+</body>
+</html>
